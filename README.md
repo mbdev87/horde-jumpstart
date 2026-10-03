@@ -1,6 +1,6 @@
 # horde-jumpstart
 
-The easiest way to get hands-on with [Epic Horde](https://www.unrealengine.com/en-US/horde) in an isolated sandbox on your own machine. 
+The easiest way to get hands-on with [Epic Horde](https://dev.epicgames.com/documentation/unreal-engine/horde-in-unreal-engine) in an isolated sandbox on your own machine. 
 
 Target audience: engineers who want to test out Horde in an end-to-end setup scenario. 
 This is fully self contained setup with perforce, server, dashboard, agents and buildgraph jobs.
