@@ -1,0 +1,32 @@
+// Minimal stream config for the sandbox depot. Deliberately tiny: one agent type
+// mapping to the pool our Linux agent auto-joins, and one no-sync "Hello" job
+// (executor: Test) so we can validate agent connectivity without a P4 sync.
+// Full schema: Docs/Config/Schema/Streams.md in the engine checkout.
+{
+	"name": "//horde/main",
+
+	"agentTypes": {
+		"Linux": {
+			"pool": "linux-ue5",
+			"workspace": "Minimal"
+		}
+	},
+
+	"workspaceTypes": {
+		"Minimal": {
+			"identifier": "Jumpstart"
+		}
+	},
+
+	"templates": [
+		{
+			"id": "hello",
+			"name": "Hello Sandbox",
+			"description": "Trivial job that runs on a Linux agent without syncing any revision control data.",
+			"initialAgentType": "Linux",
+			"jobOptions": {
+				"executor": "Test"
+			}
+		}
+	]
+}

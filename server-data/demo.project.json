@@ -1,0 +1,12 @@
+// The sandbox's one project. Registered in globals.json under plugins.build.projects.
+// Streams live in sibling files referenced by "path" below.
+{
+	"name": "Jumpstart",
+	"logo": "logo.jpg",
+	"streams": [
+		{
+			"id": "main",
+			"path": "demo.stream.json"
+		}
+	]
+}

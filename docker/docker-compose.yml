@@ -1,0 +1,79 @@
+# horde-jumpstart sandbox stack: HordeServer + MongoDB + Redis + Perforce.
+# Start with scripts/up.sh (stages the engine sources and builds the server image).
+# All ports/credentials live in ../.env
+
+name: horde-jumpstart
+
+services:
+  mongodb:
+    image: mongo:7.0.32-jammy
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-horde}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-dbPass123}
+    command: --quiet --logpath /dev/null
+    volumes:
+      - mongodb:/data/db
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    command: redis-server --save 60 1 --port ${REDIS_PORT:-30002} --loglevel warning
+    volumes:
+      - redis:/data
+
+  p4d:
+    build: ./p4d
+    restart: always
+    environment:
+      P4_SERVICE_USER: ${P4_SERVICE_USER:-horde.build}
+      P4_SERVICE_PASSWORD: ${P4_SERVICE_PASSWORD:-HordeBuild123!}
+    ports:
+      - ${P4_HOST_PORT:-11666}:${P4_PORT:-1666}
+    volumes:
+      - p4d-data:/p4root
+      # Editable bootstrap script - tweak and restart, no image rebuild needed
+      - ./p4d/init.sh:/init.sh:ro
+
+  horde-server:
+    build:
+      context: ../build/horde-context
+      dockerfile: ../../docker/horde/Dockerfile
+    restart: always
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      # Horde uses standard ASP.NET configuration; env vars override appsettings files.
+      Horde__HttpPort: ${HORDE_HTTP_PORT:-13340}
+      Horde__Http2Port: ${HORDE_HTTP2_PORT:-13342}
+      Horde__DashboardUrl: http://localhost:${HORDE_HTTP_PORT:-13340}
+      Horde__RedisConnectionConfig: redis:${REDIS_PORT:-30002}
+      Horde__DatabaseConnectionString: mongodb://${MONGO_USER:-horde}:${MONGO_PASSWORD:-dbPass123}@mongodb:27017/Horde?authSource=admin
+    ports:
+      - ${HORDE_HTTP_PORT:-13340}:${HORDE_HTTP_PORT:-13340}   # HTTP/1 (dashboard + jobs)
+      - ${HORDE_HTTP2_PORT:-13342}:${HORDE_HTTP2_PORT:-13342} # HTTP/2 (agents)
+    volumes:
+      # Editable server config + runtime state; live in the repo so you can tweak and restart.
+      - ../server-data:/app/Data
+      - ../config/appsettings.User.json:/app/appsettings.User.json:ro
+
+  horde-agent:
+    build:
+      context: ../build/horde-context
+      dockerfile: ../../docker/agent/Dockerfile
+    restart: always
+    depends_on:
+      - horde-server
+      - p4d
+    volumes:
+      # Agent working dir (per-job workspaces, caches, logs) - keep off the container FS
+      - agent-data:/agent
+      # Server connection + capability settings; edit and restart the agent
+      - ../config/agent/appsettings.User.json:/app/appsettings.User.json:ro
+
+volumes:
+  mongodb:
+  redis:
+  p4d-data:
+  agent-data:

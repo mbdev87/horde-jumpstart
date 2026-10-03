@@ -1,0 +1,12 @@
+# Normalize line endings so the Windows host and the WSL build agree.
+* text=auto eol=lf
+
+# Windows scripts must keep CRLF if ever run natively on the host.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary - never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary

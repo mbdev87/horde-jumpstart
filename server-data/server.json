@@ -1,0 +1,32 @@
+// Horde server bootstrap config (read at startup; hot-reload applies to globals.json).
+{
+	"Horde": {
+		// Anonymous auth: open the dashboard and click around, no accounts needed.
+		"AuthMethod": "Anonymous",
+
+		// Global config, hot-reloaded. Edit server-data/globals.json and it applies.
+		"ConfigPath": "globals.json",
+
+		// Perforce access for the server itself (reading config/commits). Jobs use
+		// the perforceClusters entry in globals.json instead.
+		"Perforce": [
+			{
+				"id": "Default",
+				"serverAndPort": "p4d:1666",
+				"credentials": {
+					"userName": "horde.build",
+					"password": "HordeBuild123!"
+				}
+			}
+		],
+
+		"Telemetry": [
+			{
+				"Type": "Mongo",
+				"RetainDays": 1
+			}
+		],
+
+		"UseLocalPerforceEnv": false
+	}
+}

@@ -1,0 +1,72 @@
+// Global Horde config. Hot-reloaded by the running server - edit, save, done.
+// Defaults (storage namespaces, compute pools, ACLs) come from the image;
+// this file layers the sandbox's Perforce wiring on top.
+{
+	"version": 2,
+
+	"include": [
+		{
+			"path": "$(HordeDir)/Defaults/default.global.json"
+		}
+	],
+
+	"plugins": {
+		"build": {
+			// The sandbox demo projects; edit demo.project.json / ue5.project.json next to this file.
+			"projects": [
+				{
+					"id": "jumpstart",
+					"path": "demo.project.json"
+				},
+				{
+					"id": "ue5",
+					"path": "ue5.project.json"
+				}
+			],
+
+			// The sandbox Perforce instance, reachable on the compose network.
+			"perforceClusters": [
+				{
+					"name": "Default",
+					"servers": [
+						{
+							"serverAndPort": "p4d:1666"
+						}
+					],
+					"credentials": [
+						{
+							"userName": "horde.build",
+							"password": "HordeBuild123!"
+						}
+					]
+				}
+			]
+		},
+
+		"analytics": {
+			// Telemetry store powering the dashboard Analytics page. Epic's defaults
+			// provide the "engine" store's metric aggregations and chart views.
+			// Charts stay empty until an Unreal Editor sends events to
+			// api/v1/telemetry/engine (DefaultEngine.ini APIEndpointET).
+			"stores": [
+				{
+					"id": "engine",
+					"include": [
+						{
+							"path": "$(HordeDir)/Defaults/default-metrics.telemetry.json"
+						},
+						{
+							"path": "$(HordeDir)/Defaults/default-views.telemetry.json"
+						}
+					]
+				}
+			]
+		}
+	},
+
+	"parameters": {
+		"ugs": {
+			"defaultPerforceServer": "localhost:11666"
+		}
+	}
+}
