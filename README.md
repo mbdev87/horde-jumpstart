@@ -1,7 +1,5 @@
 # horde-jumpstart
 
-<img src="docs/logo.jpg" alt="logo" width="72" align="right">
-
 The easiest way to get hands-on with [Epic Horde](https://www.unrealengine.com/en-US/horde) in an isolated sandbox on your own machine. 
 
 Target audience: engineers who want to test out Horde in an end-to-end setup scenario. 
@@ -79,14 +77,6 @@ scripts/stage-context.sh copies engine subset -> build/horde-context
 scripts/p4.sh            sandboxed p4 client
 ```
 
-## Status
-
-- [x] M1: server + dashboard reachable
-- [x] M2: Perforce with depot/stream
-- [x] M3: Linux agent joins pool, runs trivial job
-- [ ] M4: minimal BuildGraph + custom C# script node
-- [ ] M5: submit → job launches end-to-end
-- [ ] M6: one-command polish + docs
 
 The `hello` template (server-data/demo.stream.json) runs a Test-executor job
 with no Perforce sync. Trigger it from the dashboard (Jumpstart → New Build) or:
